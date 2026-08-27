@@ -76,3 +76,17 @@ source .venv/bin/activate
 pip install -r requirements.txt
 
 uvicorn app.main:app --reload
+
+### PostgreSQL and Python with Docker Compose
+
+docker compose up --build
+
+The .NET API reads the Python service URL from `RecommendationApi:BaseUrl` and
+the database connection from `ConnectionStrings:DefaultConnection`. Override
+both values with environment-specific configuration when deploying.
+
+The recommendation API loads catalog products exclusively from PostgreSQL,
+embeds the query and those products with
+`all-MiniLM-L6-v2`, compares normalized vectors with cosine similarity, and
+returns the requested top-N products with scores. User history and popularity
+signals are reserved for a later personalized-ranking phase.

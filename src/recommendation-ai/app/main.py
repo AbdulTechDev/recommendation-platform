@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from app.models import RecommendationRequest
+from app.models import RecommendationRequest, RecommendationResponse
 from app.recommendation import RecommendationEngine
 
 
@@ -25,12 +25,8 @@ def recommendations(
     request: RecommendationRequest
 ):
 
-    embedding = engine.generate_embedding(
-        request.query
+    return RecommendationResponse(
+        user_id=request.user_id,
+        query=request.query,
+        recommendations=engine.recommend(request.query, request.top_n),
     )
-
-    return {
-        "user_id": request.user_id,
-        "query": request.query,
-        "embedding_size": len(embedding)
-    }

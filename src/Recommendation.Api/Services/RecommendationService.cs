@@ -1,3 +1,8 @@
+using System.Net.Http.Json;
+using Recommendation.Api.Models;
+
+namespace Recommendation.Api.Services;
+
 public class RecommendationService
 {
     private readonly HttpClient _httpClient;
@@ -7,15 +12,18 @@ public class RecommendationService
         _httpClient = httpClient;
     }
 
-    public async Task<string> GetRecommendationsAsync(
-        object request)
+    public async Task<RecommendationResponse?> GetRecommendationsAsync(
+        RecommendationRequest request,
+        CancellationToken cancellationToken = default)
     {
-        var response = await _httpClient.PostAsJsonAsync(
-            "http://localhost:8000/api/recommendations",
-            request);
+        using var response = await _httpClient.PostAsJsonAsync(
+            "api/recommendations",
+            request,
+            cancellationToken);
 
         response.EnsureSuccessStatusCode();
 
-        return await response.Content.ReadAsStringAsync();
+        return await response.Content.ReadFromJsonAsync<RecommendationResponse>(
+            cancellationToken);
     }
 }
