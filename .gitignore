@@ -244,3 +244,7 @@ TestResults/
 
 # Python model/cache
 .cache/
+# SSH private/public keys
+Abdul
+Abdul.pub
+*.pem
