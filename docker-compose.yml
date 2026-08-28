@@ -34,6 +34,7 @@ services:
     depends_on:
       - postgres
       - recommendation-ai
+      - seed
     environment:
       ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=recommendationdb;Username=recommendation_user;Password=Recommendation@123"
       RecommendationApi__BaseUrl: "http://recommendation-ai:8000/"
@@ -49,6 +50,17 @@ services:
     entrypoint: ["/bin/sh", "-c", "dotnet tool restore || true && dotnet ef database update --no-build || true"]
     environment:
       ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=recommendationdb;Username=recommendation_user;Password=Recommendation@123"
+
+  seed:
+    build:
+      context: .
+      dockerfile: ./src/recommendation-ai/Dockerfile
+    depends_on:
+      - postgres
+    environment:
+      RECOMMENDATION_DATABASE_URL: postgresql://recommendation_user:Recommendation%40123@postgres:5432/recommendationdb
+    entrypoint: ["/bin/sh", "-c", "python seed_db.py"]
+    restart: "no"
 
 volumes:
   postgres-data:

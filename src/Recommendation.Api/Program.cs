@@ -46,6 +46,8 @@ if (!app.Environment.IsEnvironment("Test"))
         {
             var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
             db.Database.Migrate();
+            // seed data if necessary
+            Recommendation.Api.Data.SeedData.EnsureSeedData(db);
         }
     }
     catch (Exception ex)

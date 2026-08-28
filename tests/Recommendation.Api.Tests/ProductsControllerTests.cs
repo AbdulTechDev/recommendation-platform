@@ -1,0 +1,52 @@
+using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Recommendation.Api.Data;
+using Recommendation.Api.Models;
+using System.Net.Http.Json;
+
+namespace Recommendation.Api.Tests;
+
+public class ProductsControllerTests : IClassFixture<WebApplicationFactory<Program>>
+{
+    private readonly WebApplicationFactory<Program> _factory;
+
+    public ProductsControllerTests(WebApplicationFactory<Program> factory)
+    {
+            _factory = factory.WithWebHostBuilder(builder =>
+        {
+            // Ensure the app runs in the Test environment so Program.cs skips Npgsql
+            builder.UseEnvironment("Test");
+
+            builder.ConfigureServices(services =>
+            {
+                // Remove any existing registrations for AppDbContext or its options
+                var toRemove = services.Where(d => d.ServiceType == typeof(DbContextOptions<AppDbContext>)
+                                                 || d.ServiceType == typeof(AppDbContext)
+                                                 || d.ImplementationType == typeof(AppDbContext))
+                                       .ToList();
+                foreach (var d in toRemove) services.Remove(d);
+
+                services.AddDbContext<AppDbContext>(options =>
+                    options.UseInMemoryDatabase("TestDb"));
+            });
+        });
+    }
+
+    [Fact]
+    public async Task PostProduct_ThenGet_ReturnsCreatedAndContainsProduct()
+    {
+        var client = _factory.CreateClient();
+
+        var product = new Product { Name = "Test Item", Category = "TestCategory", Description = "desc", Price = 9.99m };
+        var postResp = await client.PostAsJsonAsync("/api/products", product);
+        postResp.EnsureSuccessStatusCode();
+
+        var getResp = await client.GetAsync("/api/products");
+        getResp.EnsureSuccessStatusCode();
+        var products = await getResp.Content.ReadFromJsonAsync<List<Product>>();
+        Assert.NotNull(products);
+        Assert.Contains(products!, p => p.Name == "Test Item");
+    }
+}
