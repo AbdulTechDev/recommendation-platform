@@ -18,7 +18,9 @@ services:
       retries: 5
 
   recommendation-ai:
-    build: ./src/recommendation-ai
+    build:
+      context: .
+      dockerfile: ./src/recommendation-ai/Dockerfile
     depends_on:
       - postgres
     environment:
@@ -26,7 +28,9 @@ services:
     ports:
       - "8000:8000"
   api:
-    build: ./src/Recommendation.Api
+    build:
+      context: .
+      dockerfile: ./src/Recommendation.Api/Dockerfile
     depends_on:
       - postgres
       - recommendation-ai
