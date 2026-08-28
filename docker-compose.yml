@@ -35,6 +35,16 @@ services:
       RecommendationApi__BaseUrl: "http://recommendation-ai:8000/"
     ports:
       - "5000:5000"
+  api-init:
+    image: mcr.microsoft.com/dotnet/sdk:10.0
+    depends_on:
+      - postgres
+    volumes:
+      - ./src/Recommendation.Api:/src/Recommendation.Api
+    working_dir: /src/Recommendation.Api
+    entrypoint: ["/bin/sh", "-c", "dotnet tool restore || true && dotnet ef database update --no-build || true"]
+    environment:
+      ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=recommendationdb;Username=recommendation_user;Password=Recommendation@123"
 
 volumes:
   postgres-data:
