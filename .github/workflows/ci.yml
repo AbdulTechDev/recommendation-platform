@@ -54,7 +54,7 @@ jobs:
       - name: Build Recommendation API image
         uses: docker/build-push-action@v4
         with:
-          context: ./src/Recommendation.Api
+          context: .
           file: ./src/Recommendation.Api/Dockerfile
           push: false
           tags: recommendation-api:ci
