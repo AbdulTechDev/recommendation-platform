@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Recommendation.Api.Data;
@@ -13,12 +14,19 @@ public class ProductsControllerTests : IClassFixture<WebApplicationFactory<Progr
 
     public ProductsControllerTests(WebApplicationFactory<Program> factory)
     {
-        _factory = factory.WithWebHostBuilder(builder =>
+            _factory = factory.WithWebHostBuilder(builder =>
         {
+            // Ensure the app runs in the Test environment so Program.cs skips Npgsql
+            builder.UseEnvironment("Test");
+
             builder.ConfigureServices(services =>
             {
-                var descriptor = services.SingleOrDefault(d => d.ServiceType == typeof(DbContextOptions<AppDbContext>));
-                if (descriptor != null) services.Remove(descriptor);
+                // Remove any existing registrations for AppDbContext or its options
+                var toRemove = services.Where(d => d.ServiceType == typeof(DbContextOptions<AppDbContext>)
+                                                 || d.ServiceType == typeof(AppDbContext)
+                                                 || d.ImplementationType == typeof(AppDbContext))
+                                       .ToList();
+                foreach (var d in toRemove) services.Remove(d);
 
                 services.AddDbContext<AppDbContext>(options =>
                     options.UseInMemoryDatabase("TestDb"));
