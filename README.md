@@ -57,6 +57,18 @@ GET /health
 
 POST /api/recommendations
 
+## Postman Collection
+
+You can import the included Postman collection to exercise the APIs locally:
+
+- File: `docs/postman/RecommendationPlatform.postman_collection.json`
+- Variables inside the collection:
+   - `api_base` — default `http://127.0.0.1:5000` (the .NET API)
+   - `ml_base` — default `http://127.0.0.1:8000` (the Python ML service)
+
+Import the JSON into Postman or use `newman` to run requests from the CLI.
+
+
 ## AI Model
 
 sentence-transformers/all-MiniLM-L6-v2

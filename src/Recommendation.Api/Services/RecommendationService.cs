@@ -3,7 +3,9 @@ using Recommendation.Api.Models;
 
 namespace Recommendation.Api.Services;
 
-public class RecommendationService
+using Recommendation.Api.Models;
+
+public class RecommendationService : IRecommendationService
 {
     private readonly HttpClient _httpClient;
 

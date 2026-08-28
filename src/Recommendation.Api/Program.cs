@@ -8,9 +8,12 @@ builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
-builder.Services.AddHttpClient<RecommendationService>(client =>
+if (!builder.Environment.IsEnvironment("Test"))
+{
+    builder.Services.AddDbContext<AppDbContext>(options =>
+        options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+}
+builder.Services.AddHttpClient<IRecommendationService, RecommendationService>(client =>
 {
     var recommendationApiUrl = builder.Configuration["RecommendationApi:BaseUrl"]
         ?? "http://localhost:8000/";
@@ -34,4 +37,25 @@ if (app.Urls.Any(url => Uri.TryCreate(url, UriKind.Absolute, out var uri) && uri
 
 app.MapControllers();
 
+// Ensure database migrations are applied on startup (skip in Test env)
+if (!app.Environment.IsEnvironment("Test"))
+{
+    try
+    {
+        using (var scope = app.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            db.Database.Migrate();
+        }
+    }
+    catch (Exception ex)
+    {
+        var logger = app.Services.GetRequiredService<ILogger<Program>>();
+        logger.LogWarning(ex, "Could not apply EF migrations on startup.");
+    }
+}
+
 app.Run();
+
+// Expose Program for integration tests
+public partial class Program { }

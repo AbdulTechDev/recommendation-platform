@@ -1,0 +1,86 @@
+{ 
+  "info": {
+    "name": "Recommendation Platform",
+    "_postman_id": "b1d6a9b4-0000-4000-8000-000000000000",
+    "description": "Collection for Recommendation Platform APIs (ASP.NET + Python)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "api_base", "value": "http://127.0.0.1:5000" },
+    { "key": "ml_base", "value": "http://127.0.0.1:8000" }
+  ],
+  "item": [
+    {
+      "name": "Get Products",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{api_base}}/api/products",
+          "host": [ "{{api_base}}" ],
+          "path": [ "api", "products" ]
+        }
+      }
+    },
+    {
+      "name": "Create Product",
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Content-Type", "value": "application/json" } ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Example Product\",\n  \"category\": \"Books\",\n  \"description\": \"Example description\",\n  \"price\": 19.99\n}"
+        },
+        "url": {
+          "raw": "{{api_base}}/api/products",
+          "host": [ "{{api_base}}" ],
+          "path": [ "api", "products" ]
+        }
+      }
+    },
+    {
+      "name": "Get Users",
+      "request": { "method": "GET", "url": { "raw": "{{api_base}}/api/users", "host": [ "{{api_base}}" ], "path": [ "api", "users" ] } }
+    },
+    {
+      "name": "Create User",
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Content-Type", "value": "application/json" } ],
+        "body": { "mode": "raw", "raw": "{\n  \"username\": \"alice\",\n  \"email\": \"alice@example.com\"\n}" },
+        "url": { "raw": "{{api_base}}/api/users", "host": [ "{{api_base}}" ], "path": [ "api", "users" ] }
+      }
+    },
+    {
+      "name": "Get User Interactions",
+      "request": { "method": "GET", "url": { "raw": "{{api_base}}/api/userinteractions", "host": [ "{{api_base}}" ], "path": [ "api", "userinteractions" ] } }
+    },
+    {
+      "name": "Create Interaction",
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Content-Type", "value": "application/json" } ],
+        "body": { "mode": "raw", "raw": "{\n  \"userId\": 1,\n  \"productId\": 10,\n  \"interactionType\": \"click\"\n}" },
+        "url": { "raw": "{{api_base}}/api/userinteractions", "host": [ "{{api_base}}" ], "path": [ "api", "userinteractions" ] }
+      }
+    },
+    {
+      "name": "Get Recommendations (proxy .NET)",
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Content-Type", "value": "application/json" } ],
+        "body": { "mode": "raw", "raw": "{\n  \"userId\": 1,\n  \"query\": \"Slim Fit Jeans\",\n  \"topN\": 5\n}" },
+        "url": { "raw": "{{api_base}}/api/recommendations", "host": [ "{{api_base}}" ], "path": [ "api", "recommendations" ] }
+      }
+    },
+    {
+      "name": "Get Recommendations (direct ML)",
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Content-Type", "value": "application/json" } ],
+        "body": { "mode": "raw", "raw": "{\n  \"user_id\": 1,\n  \"query\": \"Slim Fit Jeans\",\n  \"top_n\": 5\n}" },
+        "url": { "raw": "{{ml_base}}/api/recommendations", "host": [ "{{ml_base}}" ], "path": [ "api", "recommendations" ] }
+      }
+    }
+  ]
+}

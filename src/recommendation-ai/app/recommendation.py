@@ -1,8 +1,6 @@
 import os
 
 import numpy as np
-import psycopg
-from sentence_transformers import SentenceTransformer
 
 from app.models import Product, Recommendation
 
@@ -10,14 +8,20 @@ from app.models import Product, Recommendation
 class RecommendationEngine:
 
     def __init__(self, model=None, products: list[Product] | None = None):
+        if model is not None:
+            self.model = model
+        else:
+            from sentence_transformers import SentenceTransformer
 
-        self.model = model or SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
+            self.model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
         self.products = products or self._load_products()
         product_text = [self._product_text(product) for product in self.products]
         self.product_embeddings = self._encode(product_text)
 
     @staticmethod
     def _load_products() -> list[Product]:
+
+        import psycopg
 
         database_url = os.environ.get(
             "RECOMMENDATION_DATABASE_URL",
