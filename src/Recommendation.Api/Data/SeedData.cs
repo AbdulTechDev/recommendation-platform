@@ -10,9 +10,9 @@ public static class SeedData
 
         var products = new List<Product>
         {
-            new Product { Name = "Wireless Headphones", Description = "Noise cancelling over-ear headphones", Price = 199.99m },
-            new Product { Name = "Bluetooth Speaker", Description = "Portable speaker with deep bass", Price = 49.99m },
-            new Product { Name = "USB-C Charger", Description = "Fast charger for phones and tablets", Price = 19.99m }
+            new Product { Name = "Wireless Headphones", Category = "Electronics", Description = "Noise cancelling over-ear headphones", Price = 199.99m },
+            new Product { Name = "Bluetooth Speaker", Category = "Electronics", Description = "Portable speaker with deep bass", Price = 49.99m },
+            new Product { Name = "USB-C Charger", Category = "Accessories", Description = "Fast charger for phones and tablets", Price = 19.99m }
         };
 
         db.Products.AddRange(products);
