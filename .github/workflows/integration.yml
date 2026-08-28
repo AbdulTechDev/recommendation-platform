@@ -1,0 +1,27 @@
+name: Integration Smoke Tests
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  integration:
+    name: Docker Compose Integration
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Start services with Docker Compose
+        run: |
+          docker compose up --build -d
+
+      - name: Wait and run smoke tests
+        run: |
+          sleep 10
+          bash scripts/smoke_test.sh
+
+      - name: Tear down
+        if: always()
+        run: |
+          docker compose down --rmi local --volumes --remove-orphans
