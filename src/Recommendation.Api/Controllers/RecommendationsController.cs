@@ -8,9 +8,9 @@ namespace Recommendation.Api.Controllers;
 [Route("api/[controller]")]
 public sealed class RecommendationsController : ControllerBase
 {
-	private readonly RecommendationService _recommendationService;
+	private readonly IRecommendationService _recommendationService;
 
-	public RecommendationsController(RecommendationService recommendationService)
+	public RecommendationsController(IRecommendationService recommendationService)
 	{
 		_recommendationService = recommendationService;
 	}

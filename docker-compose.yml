@@ -1,29 +1,40 @@
-services:
-	postgres:
-		image: postgres:16-alpine
-		environment:
-			POSTGRES_DB: recommendationdb
-			POSTGRES_USER: recommendation_user
-			POSTGRES_PASSWORD: Recommendation@123
-		ports:
-			- "5432:5432"
-		volumes:
-			- postgres-data:/var/lib/postgresql/data
-		healthcheck:
-			test: ["CMD-SHELL", "pg_isready -U recommendation_user -d recommendationdb"]
-			interval: 5s
-			timeout: 5s
-			retries: 5
+version: "3.9"
 
-	recommendation-ai:
-		build: ./src/recommendation-ai
-		depends_on:
-			postgres:
-				condition: service_healthy
-		environment:
-			RECOMMENDATION_DATABASE_URL: postgresql://recommendation_user:Recommendation%40123@postgres:5432/recommendationdb
-		ports:
-			- "8000:8000"
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: recommendationdb
+      POSTGRES_USER: recommendation_user
+      POSTGRES_PASSWORD: Recommendation@123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U recommendation_user -d recommendationdb"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  recommendation-ai:
+    build: ./src/recommendation-ai
+    depends_on:
+      - postgres
+    environment:
+      RECOMMENDATION_DATABASE_URL: postgresql://recommendation_user:Recommendation%40123@postgres:5432/recommendationdb
+    ports:
+      - "8000:8000"
+  api:
+    build: ./src/Recommendation.Api
+    depends_on:
+      - postgres
+      - recommendation-ai
+    environment:
+      ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=recommendationdb;Username=recommendation_user;Password=Recommendation@123"
+      RecommendationApi__BaseUrl: "http://recommendation-ai:8000/"
+    ports:
+      - "5000:5000"
 
 volumes:
-	postgres-data:
+  postgres-data:
