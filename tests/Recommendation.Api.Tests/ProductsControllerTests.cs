@@ -31,14 +31,14 @@ public class ProductsControllerTests : IClassFixture<WebApplicationFactory<Progr
     {
         var client = _factory.CreateClient();
 
-        var product = new Product { Name = "Test Item", Description = "desc", Price = 9.99m };
+        var product = new Product { Name = "Test Item", Category = "TestCategory", Description = "desc", Price = 9.99m };
         var postResp = await client.PostAsJsonAsync("/api/products", product);
         postResp.EnsureSuccessStatusCode();
 
         var getResp = await client.GetAsync("/api/products");
         getResp.EnsureSuccessStatusCode();
         var products = await getResp.Content.ReadFromJsonAsync<List<Product>>();
-
-        Assert.Contains(products, p => p.Name == "Test Item");
+        Assert.NotNull(products);
+        Assert.Contains(products!, p => p.Name == "Test Item");
     }
 }
