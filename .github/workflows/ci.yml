@@ -22,6 +22,8 @@ jobs:
           pip install -r src/recommendation-ai/requirements.txt
       - name: Run pytest
         working-directory: src/recommendation-ai
+        env:
+          PYTHONPATH: ${{ github.workspace }}/src/recommendation-ai
         run: |
           pytest -q
 
