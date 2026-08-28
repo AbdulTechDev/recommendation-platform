@@ -8,7 +8,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY app ./app
 COPY wait_for_postgres.py ./wait_for_postgres.py
 COPY seed_db.py ./seed_db.py
-COPY ../../seed-products.sql ./seed-products.sql
+COPY seed-products.sql ./seed-products.sql
 
 EXPOSE 8000
 

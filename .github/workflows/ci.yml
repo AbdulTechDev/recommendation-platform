@@ -61,7 +61,7 @@ jobs:
       - name: Build Recommendation AI image
         uses: docker/build-push-action@v4
         with:
-          context: ./src/recommendation-ai
+          context: .
           file: ./src/recommendation-ai/Dockerfile
           push: false
           tags: recommendation-ai:ci
