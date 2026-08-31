@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Recommendation.Api.Models;
 using Recommendation.Api.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Recommendation.Api.Controllers;
 
@@ -16,6 +17,7 @@ public sealed class RecommendationsController : ControllerBase
 	}
 
 	[HttpPost]
+	[Authorize(Policy = "UserOrAdmin")]
 	public async Task<ActionResult<RecommendationResponse>> GetRecommendations(
 		RecommendationRequest request,
 		CancellationToken cancellationToken)

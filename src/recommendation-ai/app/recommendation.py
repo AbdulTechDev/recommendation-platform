@@ -23,10 +23,9 @@ class RecommendationEngine:
 
         import psycopg
 
-        database_url = os.environ.get(
-            "RECOMMENDATION_DATABASE_URL",
-            "host=localhost port=5432 dbname=recommendationdb user=recommendation_user password=Recommendation@123",
-        )
+        database_url = os.environ.get("RECOMMENDATION_DATABASE_URL")
+        if not database_url:
+            raise RuntimeError("RECOMMENDATION_DATABASE_URL environment variable is not set")
         with psycopg.connect(database_url) as connection:
             with connection.cursor() as cursor:
                 cursor.execute('SELECT "Id", "Name", "Category", "Description", "Price" FROM "Products" ORDER BY "Id"')

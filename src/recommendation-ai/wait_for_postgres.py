@@ -9,7 +9,7 @@ def wait_for_postgres(dsn: str, timeout: int = 60):
     start = time.time()
     while True:
         try:
-            with psycopg.connect(dsn, timeout=3) as conn:
+            with psycopg.connect(dsn, connect_timeout=3) as conn:
                 return True
         except Exception:
             if time.time() - start > timeout:

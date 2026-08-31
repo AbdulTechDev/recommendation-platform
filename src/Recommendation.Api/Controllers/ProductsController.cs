@@ -5,11 +5,15 @@ using Recommendation.Api.Models;
 
 namespace Recommendation.Api.Controllers;
 
+using Microsoft.AspNetCore.Authorization;
+
 [ApiController]
 [Route("api/[controller]")]
 public sealed class ProductsController(AppDbContext dbContext) : ControllerBase
 {
 	[HttpGet]
+	[HttpGet]
+	[AllowAnonymous]
 	public async Task<ActionResult<IReadOnlyList<Product>>> GetProducts(
 		CancellationToken cancellationToken)
 	{
@@ -17,6 +21,7 @@ public sealed class ProductsController(AppDbContext dbContext) : ControllerBase
 	}
 
 	[HttpPost]
+	[Authorize(Policy = "AdminOnly")]
 	public async Task<ActionResult<Product>> CreateProduct(
 		Product product,
 		CancellationToken cancellationToken)

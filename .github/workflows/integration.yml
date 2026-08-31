@@ -12,6 +12,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Create .env for ephemeral test database
+        run: |
+          cat > .env <<EOF
+          POSTGRES_DB=recommendationdb
+          POSTGRES_USER=recommendation_user
+          POSTGRES_PASSWORD=ci-test-password
+          EOF
+
       - name: Start services with Docker Compose
         run: |
           docker compose up --build -d

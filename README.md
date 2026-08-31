@@ -80,6 +80,14 @@ sentence-transformers/all-MiniLM-L6-v2
 dotnet restore
 dotnet run
 
+`appsettings.json` intentionally ships with an empty `ConnectionStrings:DefaultConnection`
+(no credentials are committed to the repo). Provide it via environment variable or
+`dotnet user-secrets` before running locally, e.g.:
+
+```bash
+export ConnectionStrings__DefaultConnection="Host=localhost;Port=5432;Database=recommendationdb;Username=recommendation_user;Password=<your-local-password>"
+```
+
 ### Python
 
 python3 -m venv .venv
@@ -90,6 +98,13 @@ pip install -r requirements.txt
 uvicorn app.main:app --reload
 
 ### PostgreSQL and Python with Docker Compose
+
+Copy `.env.example` to `.env` and set a real `POSTGRES_PASSWORD` (docker-compose.yml reads
+DB credentials from environment variables — nothing is hardcoded in the repo):
+
+```bash
+cp .env.example .env
+```
 
 docker compose up --build
 

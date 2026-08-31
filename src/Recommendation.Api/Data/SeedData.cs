@@ -17,5 +17,17 @@ public static class SeedData
 
         db.Products.AddRange(products);
         db.SaveChanges();
+
+        // Ensure an admin user exists for development
+        if (!db.Users.Any())
+        {
+            db.Users.Add(new Recommendation.Api.Models.User
+            {
+                Username = "admin",
+                Email = "admin@example.com",
+                Role = "Admin"
+            });
+            db.SaveChanges();
+        }
     }
 }
