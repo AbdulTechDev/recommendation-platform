@@ -9,5 +9,7 @@ public sealed class User
     public required string Email { get; set; }
     // Role for simple RBAC (e.g. "Admin", "User")
     public string Role { get; set; } = "User";
+    // Hashed password (bcrypt)
+    public string? PasswordHash { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }

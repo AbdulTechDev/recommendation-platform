@@ -17,10 +17,19 @@ public sealed class UsersController(AppDbContext dbContext) : ControllerBase
         return Ok(await dbContext.Users.AsNoTracking().ToListAsync(ct));
     }
 
+    public sealed record RegisterRequest(string Username, string Email, string Password);
+
     [HttpPost]
     [AllowAnonymous]
-    public async Task<ActionResult<User>> CreateUser(User user, CancellationToken ct)
+    public async Task<ActionResult<User>> CreateUser(RegisterRequest req, CancellationToken ct)
     {
+        var user = new User
+        {
+            Username = req.Username,
+            Email = req.Email,
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword(req.Password)
+        };
+
         dbContext.Users.Add(user);
         await dbContext.SaveChangesAsync(ct);
         return CreatedAtAction(nameof(GetUsers), new { id = user.Id }, user);

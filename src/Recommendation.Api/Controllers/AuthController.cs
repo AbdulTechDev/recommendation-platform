@@ -15,9 +15,15 @@ public sealed class AuthController(AppDbContext dbContext) : ControllerBase
     [HttpPost("token")]
     public ActionResult GetToken([FromBody] LoginRequest req)
     {
-        // Simple dev login: find user by username
+        // find user by username
         var user = dbContext.Users.SingleOrDefault(u => u.Username == req.Username);
-        if (user is null)
+        if (user is null || string.IsNullOrEmpty(user.PasswordHash))
+        {
+            return Unauthorized();
+        }
+
+        // verify password
+        if (!BCrypt.Net.BCrypt.Verify(req.Password, user.PasswordHash))
         {
             return Unauthorized();
         }
@@ -47,4 +53,4 @@ public sealed class AuthController(AppDbContext dbContext) : ControllerBase
     }
 }
 
-public sealed record LoginRequest(string Username);
+public sealed record LoginRequest(string Username, string Password);

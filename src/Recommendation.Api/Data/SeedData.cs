@@ -21,12 +21,16 @@ public static class SeedData
         // Ensure an admin user exists for development
         if (!db.Users.Any())
         {
-            db.Users.Add(new Recommendation.Api.Models.User
+            // default dev admin password: 'adminpass' (change in production)
+            var admin = new Recommendation.Api.Models.User
             {
                 Username = "admin",
                 Email = "admin@example.com",
-                Role = "Admin"
-            });
+                Role = "Admin",
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("adminpass")
+            };
+
+            db.Users.Add(admin);
             db.SaveChanges();
         }
     }

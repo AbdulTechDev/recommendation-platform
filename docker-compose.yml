@@ -39,6 +39,7 @@ services:
       ASPNETCORE_ENVIRONMENT: "Development"
       ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}"
       RecommendationApi__BaseUrl: "http://recommendation-ai:8000/"
+      Jwt__Key: ${JWT_KEY:-dev_secret_key_please_change}
     ports:
       - "${API_HOST_PORT:-5000}:5000"
   api-init:
