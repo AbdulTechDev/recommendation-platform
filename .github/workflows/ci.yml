@@ -2,6 +2,57 @@ name: CI
 
 on:
   push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  API_HOST_PORT: 5050
+  POSTGRES_DB: recommendationdb
+  POSTGRES_USER: recommendation_user
+  POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+  JWT_KEY: ${{ secrets.JWT_KEY }}
+
+jobs:
+  compose-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build compose images
+        run: docker compose build --pull
+
+      - name: Start services
+        run: |
+          docker compose up -d
+
+      - name: Wait for API
+        run: |
+          for i in $(seq 1 30); do 
+            code=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:${{ env.API_HOST_PORT }} || echo 000); 
+            echo "code=$code"; 
+            if [ "$code" = "200" ] || [ "$code" = "401" ] || [ "$code" = "403" ]; then echo "API ready"; exit 0; fi; 
+            sleep 2; 
+          done; 
+          echo "API not ready"; exit 1
+
+      - name: Run tests in SDK container attached to compose network
+        run: |
+          NETWORK_NAME="${GITHUB_REPOSITORY##*/}_default"
+          echo "Using docker network: $NETWORK_NAME"
+          docker run --rm -v "$GITHUB_WORKSPACE":/src -w /src/tests/Recommendation.Api.Tests --network "$NETWORK_NAME" mcr.microsoft.com/dotnet/sdk:10.0 bash -lc "dotnet restore && dotnet test -c Release"
+
+      - name: Tear down
+        if: always()
+        run: docker compose down --volumes
+name: CI
+
+on:
+  push:
     branches: [ '**' ]
   pull_request:
     branches: [ '**' ]
