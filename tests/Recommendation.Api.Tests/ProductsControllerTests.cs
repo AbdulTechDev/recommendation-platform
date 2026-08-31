@@ -6,6 +6,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Recommendation.Api.Data;
 using Recommendation.Api.Models;
 using System.Net.Http.Json;
+using System.Text;
+using System.Text.Json;
 
 namespace Recommendation.Api.Tests;
 
@@ -34,7 +36,7 @@ public class ProductsControllerTests : IClassFixture<WebApplicationFactory<Progr
                     foreach (var d in toRemove) services.Remove(d);
 
                     services.AddDbContext<AppDbContext>(options =>
-                        options.UseInMemoryDatabase("TestDb"));
+                        options.UseInMemoryDatabase("ProductsTestDb"));
 
                     // seed admin user
                     var sp = services.BuildServiceProvider();
@@ -56,6 +58,14 @@ public class ProductsControllerTests : IClassFixture<WebApplicationFactory<Progr
     public async Task PostProduct_ThenGet_ReturnsCreatedAndContainsProduct()
     {
         var client = _factory.CreateClient();
+        // authenticate as seeded admin
+        var loginPayload = JsonSerializer.Serialize(new { username = "testadmin", password = "adminpass" });
+        var loginResp = await client.PostAsync("/api/auth/token", new StringContent(loginPayload, Encoding.UTF8, "application/json"));
+        loginResp.EnsureSuccessStatusCode();
+        var loginBody = await loginResp.Content.ReadAsStringAsync();
+        using var loginDoc = JsonDocument.Parse(loginBody);
+        var token = loginDoc.RootElement.GetProperty("token").GetString();
+        client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
         var product = new Product { Name = "Test Item", Category = "TestCategory", Description = "desc", Price = 9.99m };
         var postResp = await client.PostAsJsonAsync("/api/products", product);

@@ -115,8 +115,8 @@ public class IntegrationTests : IClassFixture<WebApplicationFactory<Program>>
     [Fact]
     public async Task CreateInteraction_ReturnsCreated()
     {
-        // create user first
-        var userPayload = JsonSerializer.Serialize(new { username = "u1", email = "u1@example.com" });
+        // create user first (include password)
+        var userPayload = JsonSerializer.Serialize(new { username = "u1", email = "u1@example.com", password = "upass" });
         var userRes = await _client.PostAsync("/api/users", new StringContent(userPayload, Encoding.UTF8, "application/json"));
         userRes.EnsureSuccessStatusCode();
 

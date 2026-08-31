@@ -6,6 +6,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Recommendation.Api.Data;
 using Recommendation.Api.Models;
 using System.Net.Http.Json;
+using System.Text;
+using System.Text.Json;
 
 namespace Recommendation.Api.Tests;
 
@@ -56,6 +58,14 @@ public class OrdersControllerTests : IClassFixture<WebApplicationFactory<Program
     public async Task PostOrder_ThenGet_ReturnsCreatedAndContainsOrder()
     {
         var client = _factory.CreateClient();
+        // authenticate as seeded admin
+        var loginPayload = JsonSerializer.Serialize(new { username = "testadmin", password = "adminpass" });
+        var loginResp = await client.PostAsync("/api/auth/token", new StringContent(loginPayload, Encoding.UTF8, "application/json"));
+        loginResp.EnsureSuccessStatusCode();
+        var loginBody = await loginResp.Content.ReadAsStringAsync();
+        using var loginDoc = JsonDocument.Parse(loginBody);
+        var token = loginDoc.RootElement.GetProperty("token").GetString();
+        client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
         var order = new Order { UserId = 1, Total = 42.50m };
         var postResp = await client.PostAsJsonAsync("/api/orders", order);
