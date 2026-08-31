@@ -66,8 +66,8 @@ services:
 
   frontend:
     build:
-      context: .
-      dockerfile: ./src/recommendation-web/Dockerfile
+      context: ./src/recommendation-web
+      dockerfile: Dockerfile
     environment:
       VITE_API_BASE: "http://api:5000"
     ports:
