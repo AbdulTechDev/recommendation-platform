@@ -250,3 +250,31 @@ TestResults/
 Abdul
 Abdul.pub
 *.pem
+# Node
+src/recommendation-web/node_modules/
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Docker
+docker-compose.override.yml
+*.local.env
+
+# CI / build artifacts
+src/recommendation-web/dist/
+src/recommendation-web/build/
+
+# .NET additional
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Database files
+*.sqlite
+*.db
+
+# Secret files
+.env.local
+.secret
