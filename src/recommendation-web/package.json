@@ -6,7 +6,9 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview --port 3000",
-    "start": "serve -s dist -l 3000"
+    "start": "serve -s dist -l 3000",
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run --config baseUrl=http://frontend:3000"
   },
   "dependencies": {
     "@emotion/react": "^11.0.0",
@@ -20,6 +22,7 @@
   },
   "devDependencies": {
     "vite": "^5.0.0",
-    "@vitejs/plugin-react": "^5.0.0"
+    "@vitejs/plugin-react": "^5.0.0",
+    "cypress": "^12.17.0"
   }
 }

@@ -32,10 +32,14 @@ export default function NavBar() {
           Recommendation Platform
         </Typography>
         <Button color="inherit" component={Link} to="/recommendations">Recommendations</Button>
-        <Button color="inherit" component={Link} to="/orders">Orders</Button>
+        {token && <Button color="inherit" component={Link} to="/orders">Orders</Button>}
+        <Button color="inherit" component={Link} to="/cart">Cart</Button>
         {role === 'Admin' && <Button color="inherit" component={Link} to="/create-product">Create Product</Button>}
         {!token ? (
-          <Button color="inherit" component={Link} to="/login">Login</Button>
+          <>
+            <Button color="inherit" component={Link} to="/register">Register</Button>
+            <Button color="inherit" component={Link} to="/login">Login</Button>
+          </>
         ) : (
           <Button color="inherit" onClick={logout}>Logout</Button>
         )}

@@ -1,3 +1,45 @@
+# Architecture
+
+## HLD — High-Level Design
+
+Shows the overall system for the Recommendation Platform.
+
+```
+                    React
+                      │
+                      ▼
+                .NET Web API
+                 /         \
+                /           \
+               ▼             ▼
+        PostgreSQL       Python AI API
+                              │
+                              ▼
+                     Recommendation Model
+```
+
+## LLD — Low-Level Design
+
+Example component flow:
+
+```
+RecommendationController
+          ↓
+RecommendationService
+          ↓
+AIService
+          ↓
+HttpClient
+          ↓
+Python Recommendation API
+```
+
+Other diagrams to add:
+- Component Diagram
+- Deployment Diagram
+- Sequence Diagram
+- Class Diagram
+- Data Flow Diagram (DFD)
 # Recommendation Platform — Architecture
 
 ## Overview

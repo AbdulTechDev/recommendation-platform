@@ -22,10 +22,10 @@ export default function Login(){
   return (
     <Box sx={{ maxWidth: 420 }}>
       <Typography variant="h5">Login</Typography>
-      <TextField label="Username" fullWidth value={username} onChange={e => setUsername(e.target.value)} sx={{ mt:2 }} />
-      <TextField label="Password" fullWidth type="password" value={password} onChange={e => setPassword(e.target.value)} sx={{ mt:2 }} />
+      <TextField name="username" label="Username" fullWidth value={username} onChange={e => setUsername(e.target.value)} sx={{ mt:2 }} inputProps={{ 'data-cy': 'login-username' }} />
+      <TextField name="password" label="Password" fullWidth type="password" value={password} onChange={e => setPassword(e.target.value)} sx={{ mt:2 }} inputProps={{ 'data-cy': 'login-password' }} />
       {error && <Typography color="error">{error}</Typography>}
-      <Button variant="contained" sx={{ mt:2 }} onClick={submit}>Login</Button>
+      <Button variant="contained" sx={{ mt:2 }} onClick={submit} data-cy="login-submit">Login</Button>
     </Box>
   )
 }

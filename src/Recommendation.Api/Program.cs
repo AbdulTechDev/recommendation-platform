@@ -11,6 +11,17 @@ builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
+// CORS for local frontend development
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.WithOrigins("http://localhost:3000", "http://localhost:5173")
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials();
+    });
+});
 // Authentication & Authorization (JWT-based, simple dev defaults)
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -45,6 +56,23 @@ builder.Services.AddHttpClient<IRecommendationService, RecommendationService>(cl
 
 var app = builder.Build();
 
+// Simple preflight responder for local development to ensure OPTIONS requests
+// return CORS headers before reaching MVC endpoints. This makes local frontend
+// development simpler while we use a specific CORS policy.
+app.Use(async (context, next) =>
+{
+    if (string.Equals(context.Request.Method, "OPTIONS", StringComparison.OrdinalIgnoreCase))
+    {
+        context.Response.Headers.Add("Access-Control-Allow-Origin", "http://localhost:3000");
+        context.Response.Headers.Add("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
+        context.Response.Headers.Add("Access-Control-Allow-Headers", "Content-Type,Authorization");
+        context.Response.StatusCode = 200;
+        await context.Response.CompleteAsync();
+        return;
+    }
+    await next();
+});
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -53,6 +81,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+// Ensure routing is enabled, then enable CORS so preflight requests are handled
+app.UseRouting();
+app.UseCors("AllowFrontend");
 app.UseAuthentication();
 app.UseAuthorization();
 
