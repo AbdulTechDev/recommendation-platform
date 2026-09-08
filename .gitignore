@@ -252,6 +252,7 @@ Abdul.pub
 *.pem
 # Node
 src/recommendation-web/node_modules/
+src/frontend/desktop/node_modules/
 npm-debug.log*
 yarn-error.log*
 pnpm-debug.log*
