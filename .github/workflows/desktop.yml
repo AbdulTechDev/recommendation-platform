@@ -13,6 +13,9 @@ on:
       - '.github/workflows/desktop.yml'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   package:
     name: Package desktop app (${{ matrix.os }})
