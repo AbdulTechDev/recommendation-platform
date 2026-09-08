@@ -1,0 +1,23 @@
+{
+  "name": "software-developer-ai-agent",
+  "version": "1.0.0",
+  "description": "Software Developer AI Agent Desktop Application",
+  "author": "Shaikh Abdul Khaleq",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "electron": "^44.3.0",
+    "electron-builder": "^26.15.3"
+  },
+  "build": {
+    "appId": "com.example.softwaredeveloperaiagent",
+    "productName": "Software Developer AI Agent",
+    "directories": {
+      "output": "dist"
+    }
+  }
+}

@@ -1,0 +1,54 @@
+name: Desktop Build
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'src/frontend/desktop/**'
+      - '.github/workflows/desktop.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'src/frontend/desktop/**'
+      - '.github/workflows/desktop.yml'
+  workflow_dispatch:
+
+jobs:
+  package:
+    name: Package desktop app (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - windows-latest
+          - macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: src/frontend/desktop/package-lock.json
+
+      - name: Install dependencies
+        working-directory: src/frontend/desktop
+        run: npm install
+
+      - name: Verify electron installation
+        working-directory: src/frontend/desktop
+        run: npm ls electron
+
+      - name: Package with electron-builder
+        working-directory: src/frontend/desktop
+        run: npx electron-builder --publish never
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: desktop-${{ matrix.os }}
+          path: src/frontend/desktop/dist/
+          if-no-files-found: ignore
